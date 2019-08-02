@@ -39,7 +39,7 @@ pipeline {
                         String folder = dockerImageToBuild.dockerfileFolder
 
                         echo "Building ${imageTag} from ${baseImage}"
-                        def image = docker.build(imageTag, "--build-arg BASEIMAGE=${baseImage} -f ${folder}")
+                        def image = docker.build(imageTag, "--build-arg BASEIMAGE=${baseImage} ${folder}")
 
                         docker.withRegistry("", "amber-docker-credentials") {
                             echo "Pushing ${imageTag} from ${baseImage}"
