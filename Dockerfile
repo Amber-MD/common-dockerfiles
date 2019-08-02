@@ -1,4 +1,4 @@
-ARG BASEIMAGE=ubuntu:18.04
+ARG BASEIMAGE
 FROM ${BASEIMAGE}
 
 # take apt-get install list from http://ambermd.org/Installation.php
