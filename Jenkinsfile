@@ -17,6 +17,10 @@ pipeline {
     stages {
 
         stage("Build and push the docker images") {
+            agent {
+                label 'docker'
+            }
+
             when {
                 branch "feature/initial"
             }
