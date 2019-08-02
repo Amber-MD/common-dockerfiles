@@ -9,11 +9,11 @@ class Image {
 List<Image> dockerImagesToBuild = [
     new Image(dockerfileFolder: 'debian-based',
               baseImageName: "ubuntu:18.04",
-              amberImageTag: "ambermd/cpu-build:test"),
+              amberImageTag: "ambermd/cpu-build:latest"),
 
     new Image(dockerfileFolder: 'debian-based',
               baseImageName: "nvidia/cuda:10.1-devel-ubuntu18.04",
-              amberImageTag: "ambermd/gpu-build:test")
+              amberImageTag: "ambermd/gpu-build:latest")
 ]
 
 pipeline {
@@ -28,7 +28,7 @@ pipeline {
             }
 
             when {
-                branch "feature/initial"
+                branch "master"
             }
 
             steps {
