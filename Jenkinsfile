@@ -8,7 +8,7 @@ class Image {
 
 List<Image> dockerImagesToBuild = [
     new Image(dockerfileFolder: 'debian-based',
-              baseImageName: "ubuntu/18.04",
+              baseImageName: "ubuntu:18.04",
               amberImageTag: "amber/cpu-build:test"),
 
     new Image(dockerfileFolder: 'debian-based',
