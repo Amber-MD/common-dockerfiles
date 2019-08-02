@@ -1,13 +1,19 @@
 #!/usr/bin/env groovy
 
 class Image {
+    String dockerfileFolder
     String baseImageName
     String amberImageTag
 }
 
 List<Image> dockerImagesToBuild = [
-    new Image(baseImageName: "ubuntu/18.04", amberImageTag: "amber/cpu-build:test"),
-    new Image(baseImageName: "nvidia/cuda:10.1-devel-ubuntu18.04", amberImageTag: "amber/gpu-build:test")
+    new Image(dockerFileName: 'Dockerfile.debian-based',
+              baseImageName: "ubuntu/18.04",
+              amberImageTag: "amber/cpu-build:test"),
+
+    new Image(dockerFileName: 'Dockerfile.debian-based',
+              baseImageName: "nvidia/cuda:10.1-devel-ubuntu18.04",
+              amberImageTag: "amber/gpu-build:test")
 ]
 
 pipeline {
@@ -28,11 +34,15 @@ pipeline {
             steps {
                 script {
                     for (dockerImageToBuild in dockerImagesToBuild) {
-                        echo "Building ${dockerImageToBuild.amberImageTag} from ${dockerImageToBuild.baseImageName}"
-                        def image = docker.build(dockerImageToBuild.amberImageTag, "--build-arg BASE_IMAGE=${dockerImageToBuild.baseImageName}")
+                        String imageTag = dockerImageToBuild.amberImageTag
+                        String baseImage = dockerImageToBuild.baseImageName
+                        String folder = dockerImageToBuild.dockerfileFolder
+
+                        echo "Building ${imageTag} from ${baseImage}"
+                        def image = docker.build(imageTag, "--build-arg BASEIMAGE=${baseImage} -f ${folder}")
 
                         docker.withRegistry("", "amber-docker-credentials") {
-                            echo "Pushing ${dockerImageToBuild.amberImageTag} from ${dockerImageToBuild.baseImageName}"
+                            echo "Pushing ${imageTag} from ${baseImage}"
                             image.push()
                         }
                     }
