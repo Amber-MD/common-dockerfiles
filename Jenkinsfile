@@ -7,11 +7,11 @@ class Image {
 }
 
 List<Image> dockerImagesToBuild = [
-    new Image(dockerFileName: 'Dockerfile.debian-based',
+    new Image(dockerfileFolder: 'debian-based',
               baseImageName: "ubuntu/18.04",
               amberImageTag: "amber/cpu-build:test"),
 
-    new Image(dockerFileName: 'Dockerfile.debian-based',
+    new Image(dockerfileFolder: 'debian-based',
               baseImageName: "nvidia/cuda:10.1-devel-ubuntu18.04",
               amberImageTag: "amber/gpu-build:test")
 ]
