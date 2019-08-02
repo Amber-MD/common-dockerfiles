@@ -9,11 +9,11 @@ class Image {
 List<Image> dockerImagesToBuild = [
     new Image(dockerfileFolder: 'debian-based',
               baseImageName: "ubuntu:18.04",
-              amberImageTag: "amber/cpu-build:test"),
+              amberImageTag: "ambermd/cpu-build:test"),
 
     new Image(dockerfileFolder: 'debian-based',
               baseImageName: "nvidia/cuda:10.1-devel-ubuntu18.04",
-              amberImageTag: "amber/gpu-build:test")
+              amberImageTag: "ambermd/gpu-build:test")
 ]
 
 pipeline {
