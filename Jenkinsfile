@@ -13,7 +13,11 @@ List<Image> dockerImagesToBuild = [
 
     new Image(dockerfileFolder: 'debian-based',
               baseImageName: "nvidia/cuda:10.1-devel-ubuntu18.04",
-              amberImageTag: "ambermd/gpu-build:latest")
+              amberImageTag: "ambermd/gpu-build:latest"),
+
+    new Image(dockerfileFolder: "debian-based",
+              baseImageName: "gcc:9.1.0",
+              amberImageTag: "ambermd/gcc91-build:latest"),
 ]
 
 pipeline {
