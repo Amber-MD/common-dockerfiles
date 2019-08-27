@@ -9,15 +9,19 @@ class Image {
 List<Image> dockerImagesToBuild = [
     new Image(dockerfileFolder: 'debian-based',
               baseImageName: "ubuntu:18.04",
-              amberImageTag: "ambermd/cpu-build:latest"),
+              amberImageTag: "ambermd/cpu-build"),
 
     new Image(dockerfileFolder: 'debian-based',
               baseImageName: "nvidia/cuda:10.1-devel-ubuntu18.04",
-              amberImageTag: "ambermd/gpu-build:latest"),
+              amberImageTag: "ambermd/gpu-build"),
 
     new Image(dockerfileFolder: "gcc-based",
               baseImageName: "gcc:9.1.0",
-              amberImageTag: "ambermd/gcc91-build:latest"),
+              amberImageTag: "ambermd/gcc91-build"),
+
+    new Image(dockerfileFolder: "cuda-opencl",
+              baseImageName: "nvidia/cuda:10.1-devel-ubuntu18.04",
+              amberImageTag: "ambermd/opencl-cuda"),
 ]
 
 pipeline {
@@ -31,14 +35,14 @@ pipeline {
                 label 'docker'
             }
 
-            when {
-                branch "master"
-            }
-
             steps {
                 script {
+                    String tagName = "test"
+                    if (env.GIT_BRANCH == "master") {
+                        tagName = "latest"
+                    }
                     for (dockerImageToBuild in dockerImagesToBuild) {
-                        String imageTag = dockerImageToBuild.amberImageTag
+                        String imageTag = dockerImageToBuild.amberImageTag + ":" + tagName
                         String baseImage = dockerImageToBuild.baseImageName
                         String folder = dockerImageToBuild.dockerfileFolder
 
