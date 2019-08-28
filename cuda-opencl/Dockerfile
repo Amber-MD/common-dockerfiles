@@ -16,13 +16,12 @@ RUN apt-get install -y --no-install-recommends ocl-icd-libopencl1 ocl-icd-opencl
 RUN mkdir -p /etc/OpenCL/vendors && \
     echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd
 
-# Set up for the Intel compilers. This won't do anything if they're not mounted
-ENV PATH=/opt/intel/compilers_and_libraries/linux/bin/intel64:/opt/intel/openmpi/bin:${PATH}
-ENV LD_LIBRARY_PATH=/opt/intel/compilers_and_libraries/linux/mkl/lib/intel64:/opt/intel/compilers_and_libraries/linux/lib/intel64:/opt/intel/openmpi/lib
+RUN wget https://repo.continuum.io/miniconda/Miniconda3-4.7.10-Linux-x86_64.sh -O miniconda.sh && \
+    bash miniconda.sh -b -p "/opt/miniconda" && \
+    rm -f miniconda.sh && \
+    mkdir /.conda &&  chmod -R 777 /.conda &&  chmod -R 777 /opt/miniconda && \
+    conda install -y cmake numpy scipy pytest swig cython
 
-# Set up for the PGI compilers. This won't do anything if they're not mounted
-ENV PATH=/opt/pgi/linux86-64/2018/bin:/opt/pgi/linux86-64/2018/mpi/bin:${PATH}
-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/pgi/linux86-64/18.10/lib:/opt/pgi/linux86-64/2018/mpi/lib
 
 # Set up for CUDA if present. If the toolkit is installed, it will be installed to /usr/local/cuda
 ENV CUDA_HOME=/usr/local/cuda
