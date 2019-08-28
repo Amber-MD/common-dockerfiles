@@ -7,7 +7,7 @@ RUN apt-get update && \
     apt-get install -y csh flex bison patch gcc gfortran g++ make \
                        build-essential xorg-dev xutils-dev libbz2-dev zlib1g-dev \
                        libboost-dev libboost-thread-dev libboost-system-dev mpich libmpich-dev \
-                       python3 wget bc cmake git
+                       python3 wget bc cmake git gromacs doxygen libfftw3-dev automake lsb-core
 
 # Taken from NVIDIA's OpenCL Dockerfile -- runtime and devel (latter is based on the former)
 RUN apt-get install -y --no-install-recommends ocl-icd-libopencl1 ocl-icd-opencl-dev clinfo && \
