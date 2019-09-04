@@ -22,6 +22,10 @@ List<Image> dockerImagesToBuild = [
     new Image(dockerfileFolder: "cuda-opencl",
               baseImageName: "nvidia/cuda:10.1-devel-ubuntu18.04",
               amberImageTag: "swails/openmm-all"),
+
+    new Image(dockerfileFolder: "openmm-cpu",
+              baseImageName: "ubuntu:18.04",
+              amberImageTag: "swails/openmm-cpu"),
 ]
 
 pipeline {
