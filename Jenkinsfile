@@ -36,7 +36,27 @@ pipeline {
 
     agent none
 
+    options {
+        skipDefaultCheckout()
+    }
+
     stages {
+
+        stage("Checkout and stash build") {
+            agent {
+                label 'linux'
+            }
+
+            steps {
+                dir("common-dockerfiles") {
+                    checkout scm
+                }
+
+                stash includes: '**', name: 'source', useDefaultExcludes: false
+            }
+
+            post { cleanup { deleteDir() } }
+        }
 
         stage("Build and push the docker images") {
             agent {
@@ -56,12 +76,17 @@ pipeline {
                         String folder = dockerImageToBuild.dockerfileFolder
 
                         parallelStages["Building ${imageTag}"] = node {
-                            def image = docker.build(imageTag, "--build-arg BASEIMAGE=${baseImage} ${folder}")
+                            unstash 'source'
+                            dir('common-dockerfiles') {
+                                def image = docker.build(imageTag, "--build-arg BASEIMAGE=${baseImage} ${folder}")
 
-                            docker.withRegistry("", "amber-docker-credentials") {
-                                echo "Pushing ${imageTag} from ${baseImage}"
-                                image.push()
+                                docker.withRegistry("", "amber-docker-credentials") {
+                                    echo "Pushing ${imageTag} from ${baseImage}"
+                                    image.push()
+                                }
                             }
+
+                            deleteDir()
                         }
                     }
 
