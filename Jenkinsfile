@@ -75,7 +75,7 @@ pipeline {
                         String baseImage = dockerImageToBuild.baseImageName
                         String folder = dockerImageToBuild.dockerfileFolder
 
-                        parallelStages["Building ${imageTag}"] = node {
+                        parallelStages["Building ${imageTag}"] = node("docker") {
                             unstash 'source'
                             dir('common-dockerfiles') {
                                 def image = docker.build(imageTag, "--build-arg BASEIMAGE=${baseImage} ${folder}")
