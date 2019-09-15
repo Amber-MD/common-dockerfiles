@@ -64,36 +64,30 @@ pipeline {
             }
 
             steps {
+                unstash 'source'
                 script {
                     String tagName = "test"
                     if (env.GIT_BRANCH == "master") {
                         tagName = "latest"
                     }
-                    def parallelStages = [:]
                     for (dockerImageToBuild in dockerImagesToBuild) {
                         String imageTag = dockerImageToBuild.amberImageTag + ":" + tagName
                         String baseImage = dockerImageToBuild.baseImageName
                         String folder = dockerImageToBuild.dockerfileFolder
 
-                        parallelStages["Building ${imageTag}"] = node("docker") {
-                            stage("Building ${imageTag}") {
-                                unstash 'source'
-                                dir('common-dockerfiles') {
-                                    def image = docker.build(imageTag, "--build-arg BASEIMAGE=${baseImage} ${folder}")
+                        dir('common-dockerfiles') {
+                            def image = docker.build(imageTag, "--build-arg BASEIMAGE=${baseImage} ${folder}")
 
-                                    docker.withRegistry("", "amber-docker-credentials") {
-                                        echo "Pushing ${imageTag} from ${baseImage}"
-                                        image.push()
-                                    }
-                                }
-                                deleteDir()
+                            docker.withRegistry("", "amber-docker-credentials") {
+                                echo "Pushing ${imageTag} from ${baseImage}"
+                                image.push()
                             }
                         }
                     }
-
-                    parallel parallelStages
                 }
             }
+
+            post { cleanup { deleteDir() } }
         }
     }
 }
