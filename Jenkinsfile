@@ -86,8 +86,6 @@ pipeline {
                                         image.push()
                                     }
                                 }
-
-                                deleteDir()
                             }
                         }
                     }
@@ -95,6 +93,8 @@ pipeline {
                     parallel parallelStages
                 }
             }
+
+            post { cleanup { deleteDir() } }
         }
     }
 }
