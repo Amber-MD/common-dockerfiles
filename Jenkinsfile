@@ -26,13 +26,37 @@ List<Image> dockerImagesToBuild = [
     new Image(dockerfileFolder: "openmm-cpu",
               baseImageName: "ubuntu:18.04",
               amberImageTag: "swails/openmm-cpu"),
+
+    new Image(dockerfileFolder: "lyx",
+              baseImageName: "ubuntu:18.04",
+              amberImageTag: "ambermd/lyx"),
 ]
 
 pipeline {
 
     agent none
 
+    options {
+        skipDefaultCheckout()
+    }
+
     stages {
+
+        stage("Checkout and stash build") {
+            agent {
+                label 'linux'
+            }
+
+            steps {
+                dir("common-dockerfiles") {
+                    checkout scm
+                }
+
+                stash includes: '**', name: 'source', useDefaultExcludes: false
+            }
+
+            post { cleanup { deleteDir() } }
+        }
 
         stage("Build and push the docker images") {
             agent {
@@ -40,6 +64,7 @@ pipeline {
             }
 
             steps {
+                unstash 'source'
                 script {
                     String tagName = "test"
                     if (env.GIT_BRANCH == "master") {
@@ -50,17 +75,19 @@ pipeline {
                         String baseImage = dockerImageToBuild.baseImageName
                         String folder = dockerImageToBuild.dockerfileFolder
 
-                        echo "Building ${imageTag} from ${baseImage}"
-                        def image = docker.build(imageTag, "--build-arg BASEIMAGE=${baseImage} ${folder}")
+                        dir('common-dockerfiles') {
+                            def image = docker.build(imageTag, "--build-arg BASEIMAGE=${baseImage} ${folder}")
 
-                        docker.withRegistry("", "amber-docker-credentials") {
-                            echo "Pushing ${imageTag} from ${baseImage}"
-                            image.push()
+                            docker.withRegistry("", "amber-docker-credentials") {
+                                echo "Pushing ${imageTag} from ${baseImage}"
+                                image.push()
+                            }
                         }
                     }
                 }
             }
-        }
 
+            post { cleanup { deleteDir() } }
+        }
     }
 }
