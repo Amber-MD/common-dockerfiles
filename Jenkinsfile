@@ -67,7 +67,7 @@ pipeline {
                 unstash 'source'
                 script {
                     String tagName = "test"
-                    if (env.GIT_BRANCH == "master") {
+                    if ("${GIT_BRANCH}" == "master") {
                         tagName = "latest"
                     }
                     for (dockerImageToBuild in dockerImagesToBuild) {
