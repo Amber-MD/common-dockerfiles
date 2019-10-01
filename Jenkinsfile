@@ -50,7 +50,6 @@ pipeline {
             steps {
                 dir("common-dockerfiles") {
                     checkout scm
-                    sh "git branch"
                 }
 
                 stash includes: '**', name: 'source', useDefaultExcludes: false
@@ -69,7 +68,9 @@ pipeline {
                 dir('common-dockerfiles') {
                     script {
                         String tagName = "test"
-                        if ("${env.GIT_BRANCH}" == "master") {
+                        echo "env.BRANCH_NAME = ${env.BRANCH_NAME}"
+                        if ("${env.BRANCH_NAME}" == "master") {
+                            echo "Running on master branch, using 'latest' tag"
                             tagName = "latest"
                         }
                         for (dockerImageToBuild in dockerImagesToBuild) {
