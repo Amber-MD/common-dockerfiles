@@ -68,7 +68,6 @@ pipeline {
                 dir('common-dockerfiles') {
                     script {
                         String tagName = "test"
-                        echo "env.BRANCH_NAME = ${env.BRANCH_NAME}"
                         if ("${env.BRANCH_NAME}" == "master") {
                             echo "Running on master branch, using 'latest' tag"
                             tagName = "latest"
