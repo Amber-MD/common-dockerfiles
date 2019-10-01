@@ -50,6 +50,7 @@ pipeline {
             steps {
                 dir("common-dockerfiles") {
                     checkout scm
+                    echo "env.GIT_BRANCH = ${env.GIT_BRANCH}"
                 }
 
                 stash includes: '**', name: 'source', useDefaultExcludes: false
@@ -65,17 +66,18 @@ pipeline {
 
             steps {
                 unstash 'source'
-                script {
-                    String tagName = "test"
-                    if ("${env.GIT_BRANCH}" == "master") {
-                        tagName = "latest"
-                    }
-                    for (dockerImageToBuild in dockerImagesToBuild) {
-                        String imageTag = dockerImageToBuild.amberImageTag + ":" + tagName
-                        String baseImage = dockerImageToBuild.baseImageName
-                        String folder = dockerImageToBuild.dockerfileFolder
+                dir('common-dockerfiles') {
+                    script {
+                        String tagName = "test"
+                        echo "GIT_BRANCH = ${env.GIT_BRANCH}"
+                        if ("${env.GIT_BRANCH}" == "master") {
+                            tagName = "latest"
+                        }
+                        for (dockerImageToBuild in dockerImagesToBuild) {
+                            String imageTag = dockerImageToBuild.amberImageTag + ":" + tagName
+                            String baseImage = dockerImageToBuild.baseImageName
+                            String folder = dockerImageToBuild.dockerfileFolder
 
-                        dir('common-dockerfiles') {
                             def image = docker.build(imageTag, "--build-arg BASEIMAGE=${baseImage} ${folder}")
 
                             docker.withRegistry("", "amber-docker-credentials") {
