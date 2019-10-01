@@ -65,17 +65,18 @@ pipeline {
 
             steps {
                 unstash 'source'
-                script {
-                    String tagName = "test"
-                    if (env.GIT_BRANCH == "master") {
-                        tagName = "latest"
-                    }
-                    for (dockerImageToBuild in dockerImagesToBuild) {
-                        String imageTag = dockerImageToBuild.amberImageTag + ":" + tagName
-                        String baseImage = dockerImageToBuild.baseImageName
-                        String folder = dockerImageToBuild.dockerfileFolder
+                dir('common-dockerfiles') {
+                    script {
+                        String tagName = "test"
+                        if ("${env.BRANCH_NAME}" == "master") {
+                            echo "Running on master branch, using 'latest' tag"
+                            tagName = "latest"
+                        }
+                        for (dockerImageToBuild in dockerImagesToBuild) {
+                            String imageTag = dockerImageToBuild.amberImageTag + ":" + tagName
+                            String baseImage = dockerImageToBuild.baseImageName
+                            String folder = dockerImageToBuild.dockerfileFolder
 
-                        dir('common-dockerfiles') {
                             def image = docker.build(imageTag, "--build-arg BASEIMAGE=${baseImage} ${folder}")
 
                             docker.withRegistry("", "amber-docker-credentials") {
