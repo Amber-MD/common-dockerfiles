@@ -50,7 +50,7 @@ pipeline {
             steps {
                 dir("common-dockerfiles") {
                     checkout scm
-                    echo "env.GIT_BRANCH = ${env.GIT_BRANCH}"
+                    sh "git branch"
                 }
 
                 stash includes: '**', name: 'source', useDefaultExcludes: false
@@ -69,7 +69,6 @@ pipeline {
                 dir('common-dockerfiles') {
                     script {
                         String tagName = "test"
-                        echo "GIT_BRANCH = ${env.GIT_BRANCH}"
                         if ("${env.GIT_BRANCH}" == "master") {
                             tagName = "latest"
                         }
