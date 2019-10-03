@@ -1,6 +1,11 @@
 ARG BASEIMAGE
 FROM ${BASEIMAGE}
 
+# Make /.lyx directory available and writable for everyone so it can be
+# run as a non-root user with no home directory (like the environment set
+# up for Jenkins)
+RUN mkdir /.lyx && chmod a+rwx /.lyx
+
 RUN apt-get update && \
     apt-get install -y software-properties-common
 
@@ -15,5 +20,6 @@ RUN add-apt-repository -y ppa:lyx-devel/release && \
     apt-get update && \
     apt-get install -y texlive-latex-recommended texlive-fonts-recommended chktex \
                        preview-latex-style dvipng imagemagick psutils gv \
-                       texlive-latex-extra && \
+                       texlive-latex-extra git-core texlive-font-utils \
+                       texlive-extra-utils texlive-fonts-extra && \
     apt-get install -y lyx
