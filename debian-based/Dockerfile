@@ -9,7 +9,8 @@ RUN mkdir -p /opt/intel && \
     apt-get install -y csh flex bison patch gcc gfortran g++ make \
                        build-essential xorg-dev xutils-dev libbz2-dev zlib1g-dev \
                        libboost-dev libboost-thread-dev libboost-system-dev mpich libmpich-dev \
-                       python3 wget bc cmake git gromacs doxygen libfftw3-dev automake lsb-core
+                       python3 wget bc cmake git gromacs doxygen libfftw3-dev automake lsb-core \
+                       libnetcdf-dev netcdf-bin libnetcdf-c++4-dev libnetcdff-dev
 
 # Set up for the Intel compilers. This won't do anything if they're not mounted
 ENV PATH=/opt/intel/compilers_and_libraries/linux/bin/intel64:/opt/intel/openmpi/bin:${PATH}
