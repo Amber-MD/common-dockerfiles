@@ -21,5 +21,5 @@ RUN add-apt-repository -y ppa:lyx-devel/release && \
     apt-get install -y texlive-latex-recommended texlive-fonts-recommended chktex \
                        preview-latex-style dvipng imagemagick psutils gv \
                        texlive-latex-extra git-core texlive-font-utils \
-                       texlive-extra-utils texlive-fonts-extra && \
+                       texlive-extra-utils texlive-fonts-extra doxygen && \
     apt-get install -y lyx
