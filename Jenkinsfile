@@ -30,6 +30,10 @@ List<Image> dockerImagesToBuild = [
     new Image(dockerfileFolder: "lyx",
               baseImageName: "ubuntu:18.04",
               amberImageTag: "ambermd/lyx"),
+
+    new Image(dockerfileFolder: "maven",
+              baseImageName: "ubuntu:18.04",
+              amberImageTag: "swails/maven"),
 ]
 
 pipeline {
