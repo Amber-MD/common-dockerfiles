@@ -71,23 +71,28 @@ pipeline {
                 unstash 'source'
                 dir('common-dockerfiles') {
                     script {
+                        Map parallelStages = [:]
                         String tagName = "test"
-                        if ("${env.BRANCH_NAME}" == "master") {
+                        if (env.BRANCH_NAME == "master") {
                             echo "Running on master branch, using 'latest' tag"
                             tagName = "latest"
                         }
-                        for (dockerImageToBuild in dockerImagesToBuild) {
-                            String imageTag = dockerImageToBuild.amberImageTag + ":" + tagName
+                        dockerImagesToBuild.each { dockerImageToBuild ->
+                            String imageTag = "${dockerImageToBuild.amberImageTag}:${tagName}"
                             String baseImage = dockerImageToBuild.baseImageName
                             String folder = dockerImageToBuild.dockerfileFolder
 
-                            def image = docker.build(imageTag, "--build-arg BASEIMAGE=${baseImage} ${folder}")
-
-                            docker.withRegistry("", "amber-docker-credentials") {
-                                echo "Pushing ${imageTag} from ${baseImage}"
-                                image.push()
+                            parallelStages["Building ${imageTag}"] = {
+                                stage(imageTag) {
+                                    def image = docker.build(imageTag, "--build-arg BASEIMAGE=${baseImage} ${folder}")
+                                    docker.withRegistry('', 'amber-docker-credentials') {
+                                        echo "Pushing ${imageTag} from ${baseImage}"
+                                        image.push()
+                                    }
+                                }
                             }
                         }
+                        parallel parallelStages
                     }
                 }
             }
