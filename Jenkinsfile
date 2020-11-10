@@ -19,6 +19,10 @@ List<Image> dockerImagesToBuild = [
               baseImageName: "gcc:9.1.0",
               amberImageTag: "ambermd/gcc91-build"),
 
+    new Image(dockerfileFolder: "gcc-based",
+              baseImageName: "gcc:10.2",
+              amberImageTag: "ambermd/gcc102-build"),
+
     new Image(dockerfileFolder: "cuda-opencl",
               baseImageName: "nvidia/cuda:10.1-devel-ubuntu18.04",
               amberImageTag: "swails/openmm-all"),
