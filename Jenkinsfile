@@ -58,6 +58,8 @@ pipeline {
             steps {
                 dir("common-dockerfiles") {
                     checkout scm
+                    sh 'env'
+                    error('quitting!')
                 }
 
                 stash includes: '**', name: 'source', useDefaultExcludes: false
