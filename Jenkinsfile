@@ -52,6 +52,11 @@ pipeline {
         skipDefaultCheckout()
     }
 
+    parameters {
+        choice(choices: ['no', 'yes'], name: 'FORCE_BUILD',
+               description: 'Should a build be forced for all images?')
+    }
+
     stages {
 
         stage('Checkout and stash build') {
@@ -78,20 +83,29 @@ pipeline {
                         Map parallelStages = [:]
                         String tagName = 'test'
                         if (env.BRANCH_NAME == 'master') {
-                            echo 'Running on master branch, using 'latest' tag'
+                            echo 'Running on master branch, using latest tag'
                             tagName = 'latest'
                         }
                         dockerImagesToBuild.each { dockerImageToBuild ->
                             String imageTag = "${dockerImageToBuild.amberImageTag}:${tagName}"
                             String baseImage = dockerImageToBuild.baseImageName
                             String folder = dockerImageToBuild.dockerfileFolder
+                            boolean doBuild = params.FORCE_BUILD == 'yes' || github.fileChangedIn(path: "${folder}/")
 
-                            parallelStages["Building ${imageTag}"] = {
-                                stage(imageTag) {
-                                    def image = docker.build(imageTag, "--build-arg BASEIMAGE=${baseImage} ${folder}")
-                                    docker.withRegistry('', 'amber-docker-credentials') {
-                                        echo "Pushing ${imageTag} from ${baseImage}"
-                                        image.push()
+                            if (doBuild) {
+                                parallelStages["Building ${imageTag}"] = {
+                                    stage(imageTag) {
+                                        def image = docker.build(imageTag, "--build-arg BASEIMAGE=${baseImage} ${folder}")
+                                        docker.withRegistry('', 'amber-docker-credentials') {
+                                            echo "Pushing ${imageTag} from ${baseImage}"
+                                            image.push()
+                                        }
+                                    }
+                                }
+                            } else {
+                                parallelStages["Building ${imageTag}"] = {
+                                    stage(imageTag) {
+                                        echo "INFO: No changes or force build requires building ${imageTag}"
                                     }
                                 }
                             }
