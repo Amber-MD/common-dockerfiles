@@ -40,7 +40,7 @@ List<Image> dockerImagesToBuild = [
               amberImageTag: 'swails/maven'),
 
     new Image(dockerfileFolder: 'ansible',
-              baseImageName: 'ubuntu:20.04',
+              baseImageName: 'ubuntu:18.04',
               amberImageTag: 'swails/ansible'),
 ]
 
