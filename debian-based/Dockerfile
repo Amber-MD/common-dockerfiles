@@ -1,6 +1,8 @@
 ARG BASEIMAGE
 FROM ${BASEIMAGE}
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 # take apt-get install list from http://ambermd.org/Installation.php
 RUN mkdir -p /opt/intel && \
     mkdir -p /opt/pgi && \
