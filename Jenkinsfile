@@ -77,6 +77,7 @@ pipeline {
             agent { label 'docker' }
 
             steps {
+                unstash 'source'
                 dir('common-dockerfiles') {
                     script {
                         Map parallelStages = [:]
@@ -95,10 +96,12 @@ pipeline {
                                 parallelStages["Building ${imageTag}"] = {
                                     node('docker') {
                                         unstash 'source'
-                                        def image = docker.build(imageTag, "--build-arg BASEIMAGE=${baseImage} ${folder}")
-                                        docker.withRegistry('', 'amber-docker-credentials') {
-                                            echo "Pushing ${imageTag} from ${baseImage}"
-                                            image.push()
+                                        dir('common-dockerfiles') {
+                                            def image = docker.build(imageTag, "--build-arg BASEIMAGE=${baseImage} ${folder}")
+                                            docker.withRegistry('', 'amber-docker-credentials') {
+                                                echo "Pushing ${imageTag} from ${baseImage}"
+                                                image.push()
+                                            }
                                         }
                                     }
                                 }
