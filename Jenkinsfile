@@ -12,7 +12,7 @@ List<Image> dockerImagesToBuild = [
               amberImageTag: 'ambermd/cpu-build'),
 
     new Image(dockerfileFolder: 'debian-based',
-              baseImageName: 'nvidia/cuda:11.4.2-devel-ubuntu20.04',
+              baseImageName: 'nvidia/cuda:11.2.2-devel-ubuntu18.04',
               amberImageTag: 'ambermd/gpu-build'),
 
     new Image(dockerfileFolder: 'gcc-based',
