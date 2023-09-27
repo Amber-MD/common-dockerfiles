@@ -20,7 +20,7 @@ RUN mkdir -p /etc/OpenCL/vendors && \
 
 ENV PATH="/opt/miniconda/bin:${PATH}"
 
-RUN wget https://repo.continuum.io/miniconda/Miniconda3-4.5.11-Linux-x86_64.sh -O miniconda.sh && \
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py310_23.5.2-0-Linux-x86_64.sh -O miniconda.sh && \
     bash miniconda.sh -b -p "/opt/miniconda" && \
     rm -f miniconda.sh && \
     mkdir /.conda &&  chmod -R 777 /.conda && \
