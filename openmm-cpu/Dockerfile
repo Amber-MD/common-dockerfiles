@@ -16,4 +16,4 @@ RUN wget https://repo.continuum.io/miniconda/Miniconda3-4.5.11-Linux-x86_64.sh -
     bash miniconda.sh -b -p "/opt/miniconda" && \
     rm -f miniconda.sh && \
     mkdir /.conda &&  chmod -R 777 /.conda &&  chmod -R 777 /opt/miniconda && \
-    conda install -y cmake numpy scipy pytest swig cython
+    conda install -y cmake numpy scipy pytest swig cython && chmod -R 777 /opt
