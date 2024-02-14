@@ -12,7 +12,7 @@ RUN apt-get update && \
 
 ENV PATH="/opt/miniconda/bin:${PATH}"
 
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py310_23.5.2-0-Linux-x86_64.sh -O miniconda.sh && \
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py310_23.11.0-2-Linux-x86_64.sh -O miniconda.sh && \
     bash miniconda.sh -b -p "/opt/miniconda" && \
     rm -f miniconda.sh && \
     mkdir /.conda &&  chmod -R 777 /.conda &&  \
