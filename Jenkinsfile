@@ -8,11 +8,11 @@ class Image {
 
 List<Image> dockerImagesToBuild = [
     new Image(dockerfileFolder: 'debian-based',
-              baseImageName: 'ubuntu:18.04',
+              baseImageName: 'ubuntu:22.04',
               amberImageTag: 'ambermd/cpu-build'),
 
     new Image(dockerfileFolder: 'debian-based',
-              baseImageName: 'nvidia/cuda:10.1-devel-ubuntu18.04',
+              baseImageName: 'nvidia/cuda:11.4.3-devel-ubuntu20.04',
               amberImageTag: 'ambermd/gpu-build'),
 
     new Image(dockerfileFolder: 'gcc-based',
@@ -24,11 +24,11 @@ List<Image> dockerImagesToBuild = [
               amberImageTag: 'ambermd/gcc102-build'),
 
     new Image(dockerfileFolder: 'cuda-opencl',
-              baseImageName: 'nvidia/cuda:10.1-devel-ubuntu18.04',
+              baseImageName: 'nvidia/cuda:11.4.3-devel-ubuntu20.04',
               amberImageTag: 'swails/openmm-all'),
 
     new Image(dockerfileFolder: 'openmm-cpu',
-              baseImageName: 'ubuntu:18.04',
+              baseImageName: 'ubuntu:20.04',
               amberImageTag: 'swails/openmm-cpu'),
 
     new Image(dockerfileFolder: 'lyx',
@@ -59,42 +59,28 @@ pipeline {
 
     stages {
 
-        stage('Checkout and stash build') {
-            agent { label 'linux' }
-
-            steps {
-                dir('common-dockerfiles') {
-                    checkout scm
-                }
-
-                stash includes: '**', name: 'source', useDefaultExcludes: false
-            }
-
-            post { cleanup { deleteDir() } }
-        }
-
         stage('Build and push the docker images') {
             agent { label 'docker' }
 
             steps {
-                unstash 'source'
-                dir('common-dockerfiles') {
-                    script {
-                        Map parallelStages = [:]
-                        String tagName = 'test'
-                        if (env.BRANCH_NAME == 'master') {
-                            echo 'Running on master branch, using latest tag'
-                            tagName = 'latest'
-                        }
-                        dockerImagesToBuild.each { dockerImageToBuild ->
-                            String imageTag = "${dockerImageToBuild.amberImageTag}:${tagName}"
-                            String baseImage = dockerImageToBuild.baseImageName
-                            String folder = dockerImageToBuild.dockerfileFolder
-                            boolean doBuild = params.FORCE_BUILD == 'yes' || github.fileChangedIn(path: "${folder}/")
+                script {
+                    Map parallelStages = [:]
+                    String tagName = 'test'
+                    if (env.BRANCH_NAME == 'master') {
+                        echo 'Running on master branch, using latest tag'
+                        tagName = 'latest'
+                    }
+                    dockerImagesToBuild.each { dockerImageToBuild ->
+                        String imageTag = "${dockerImageToBuild.amberImageTag}:${tagName}"
+                        String baseImage = dockerImageToBuild.baseImageName
+                        String folder = dockerImageToBuild.dockerfileFolder
+                        boolean doBuild = params.FORCE_BUILD == 'yes' || github.fileChangedIn(path: "${folder}/")
 
-                            if (doBuild) {
-                                parallelStages["Building ${imageTag}"] = {
-                                    node('docker') {
+                        if (doBuild) {
+                            parallelStages["Building ${imageTag}"] = {
+                                node('docker') {
+                                    dir('common-dockerfiles') {
+                                        checkout scm
                                         def image = docker.build(imageTag, "--build-arg BASEIMAGE=${baseImage} ${folder}")
                                         docker.withRegistry('', 'amber-docker-credentials') {
                                             echo "Pushing ${imageTag} from ${baseImage}"
@@ -102,16 +88,16 @@ pipeline {
                                         }
                                     }
                                 }
-                            } else {
-                                parallelStages["Building ${imageTag}"] = {
-                                    stage(imageTag) {
-                                        echo "INFO: No changes or force build requires building ${imageTag}"
-                                    }
+                            }
+                        } else {
+                            parallelStages["Building ${imageTag}"] = {
+                                stage(imageTag) {
+                                    echo "INFO: No changes or force build requires building ${imageTag}"
                                 }
                             }
                         }
-                        parallel parallelStages
                     }
+                    parallel parallelStages
                 }
             }
 

@@ -1,6 +1,8 @@
 ARG BASEIMAGE
 FROM ${BASEIMAGE}
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Make /.lyx directory available and writable for everyone so it can be
 # run as a non-root user with no home directory (like the environment set
 # up for Jenkins)
