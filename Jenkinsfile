@@ -12,7 +12,7 @@ List<Image> dockerImagesToBuild = [
               amberImageTag: 'ambermd/cpu-build'),
 
     new Image(dockerfileFolder: 'debian-based',
-              baseImageName: 'nvidia/cuda:11.6.1-devel-ubuntu20.04',
+              baseImageName: 'nvidia/cuda:11.4.3-devel-ubuntu20.04',
               amberImageTag: 'ambermd/gpu-build'),
 
     new Image(dockerfileFolder: 'gcc-based',
@@ -24,7 +24,7 @@ List<Image> dockerImagesToBuild = [
               amberImageTag: 'ambermd/gcc102-build'),
 
     new Image(dockerfileFolder: 'cuda-opencl',
-              baseImageName: 'nvidia/cuda:11.6.1-devel-ubuntu20.04',
+              baseImageName: 'nvidia/cuda:11.4.3-devel-ubuntu20.04',
               amberImageTag: 'swails/openmm-all'),
 
     new Image(dockerfileFolder: 'openmm-cpu',
