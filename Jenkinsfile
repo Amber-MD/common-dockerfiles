@@ -93,8 +93,8 @@ pipeline {
                         if (doBuild) {
                             parallelStages["Building ${imageTag}"] = {
                                 node('docker') {
-                                    unstash 'source'
                                     dir('common-dockerfiles') {
+                                        checkout scm
                                         def image = docker.build(imageTag, "--build-arg BASEIMAGE=${baseImage} ${folder}")
                                         docker.withRegistry('', 'amber-docker-credentials') {
                                             echo "Pushing ${imageTag} from ${baseImage}"
