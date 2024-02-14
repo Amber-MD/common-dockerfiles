@@ -18,7 +18,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata && \
     dpkg-reconfigure --frontend noninteractive tzdata
 
 # Install LyX from https://wiki.lyx.org/LyX/LyXOnUbuntu
-RUN apt-get install -y texlive-latex-recommended texlive-fonts-recommended chktex \
+RUN add-apt-repository -y ppa:lyx-devel/release && \
+    apt-get update && \
+    apt-get install -y texlive-latex-recommended texlive-fonts-recommended chktex \
                        preview-latex-style dvipng imagemagick psutils gv \
                        texlive-latex-extra git-core texlive-font-utils \
                        texlive-extra-utils texlive-fonts-extra make doxygen && \

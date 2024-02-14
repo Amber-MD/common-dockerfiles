@@ -32,7 +32,7 @@ List<Image> dockerImagesToBuild = [
               amberImageTag: 'swails/openmm-cpu'),
 
     new Image(dockerfileFolder: 'lyx',
-              baseImageName: 'ubuntu:22.04',
+              baseImageName: 'ubuntu:18.04',
               amberImageTag: 'ambermd/lyx'),
 
     new Image(dockerfileFolder: 'maven',
