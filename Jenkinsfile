@@ -12,7 +12,7 @@ List<Image> dockerImagesToBuild = [
               amberImageTag: 'ambermd/cpu-build'),
 
     new Image(dockerfileFolder: 'debian-based',
-              baseImageName: 'nvidia/11.6.1-devel-ubuntu20.04',
+              baseImageName: 'nvidia/cuda:11.6.1-devel-ubuntu20.04',
               amberImageTag: 'ambermd/gpu-build'),
 
     new Image(dockerfileFolder: 'gcc-based',
@@ -24,11 +24,11 @@ List<Image> dockerImagesToBuild = [
               amberImageTag: 'ambermd/gcc102-build'),
 
     new Image(dockerfileFolder: 'cuda-opencl',
-              baseImageName: 'nvidia/cuda:12.3.1-devel-ubuntu20.04',
+              baseImageName: 'nvidia/cuda:11.6.1-devel-ubuntu20.04',
               amberImageTag: 'swails/openmm-all'),
 
     new Image(dockerfileFolder: 'openmm-cpu',
-              baseImageName: 'ubuntu:22.04',
+              baseImageName: 'ubuntu:20.04',
               amberImageTag: 'swails/openmm-cpu'),
 
     new Image(dockerfileFolder: 'lyx',
@@ -58,20 +58,6 @@ pipeline {
     }
 
     stages {
-
-        stage('Checkout and stash build') {
-            agent { label 'linux' }
-
-            steps {
-                dir('common-dockerfiles') {
-                    checkout scm
-                }
-
-                stash includes: '**', name: 'source', useDefaultExcludes: false
-            }
-
-            post { cleanup { deleteDir() } }
-        }
 
         stage('Build and push the docker images') {
             agent { label 'docker' }
