@@ -1,6 +1,8 @@
 ARG BASEIMAGE
 FROM ${BASEIMAGE}
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 # take apt-get install list from http://ambermd.org/Installation.php
 RUN apt-get update && \
     apt-get upgrade -y && \
@@ -18,11 +20,11 @@ RUN mkdir -p /etc/OpenCL/vendors && \
 
 ENV PATH="/opt/miniconda/bin:${PATH}"
 
-RUN wget https://repo.continuum.io/miniconda/Miniconda3-4.5.11-Linux-x86_64.sh -O miniconda.sh && \
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py310_23.11.0-2-Linux-x86_64.sh -O miniconda.sh && \
     bash miniconda.sh -b -p "/opt/miniconda" && \
     rm -f miniconda.sh && \
-    mkdir /.conda &&  chmod -R 777 /.conda &&  chmod -R 777 /opt/miniconda && \
-    conda install -y cmake numpy scipy pytest swig cython
+    mkdir /.conda &&  chmod -R 777 /.conda && \
+    conda install -y cmake numpy scipy pytest swig cython && chmod -R 777 /opt
 
 
 # Set up for CUDA if present. If the toolkit is installed, it will be installed to /usr/local/cuda

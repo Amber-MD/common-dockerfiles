@@ -1,6 +1,8 @@
 ARG BASEIMAGE
 FROM ${BASEIMAGE}
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Take instructions from https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-ubuntu
 RUN apt-get update && \
     apt-get upgrade -y && \
